@@ -1,0 +1,225 @@
+# Bonds Overview (اوراق قرضه)
+
+Bonds (اوراق قرضه - _Oraghe Gharzeh_) are a financial mechanism that allows the protocol to acquire treasury assets in exchange for PARS at a discount. Bonds serve as the primary method for growing protocol reserves and managing PARS supply.
+
+## What Are Bonds?
+
+Bonds are a market-driven exchange mechanism:
+
+- Users provide assets (stablecoins, ETH, LP tokens)
+- Protocol provides PARS at a discount to market price
+- Transaction settles over a vesting period
+
+Unlike lending, bonds are purchases—not loans that require repayment.
+
+## Why Bonds?
+
+### For the Protocol
+
+| Benefit | Description |
+|:--------|:------------|
+| **Treasury Growth** | Accumulates reserves without external funding |
+| **Supply Management** | Controls PARS supply based on demand |
+| **Liquidity Acquisition** | Acquires permanent protocol-owned liquidity |
+| **Price Stability** | Provides counter-cyclical supply mechanisms |
+
+### For Users
+
+| Benefit | Description |
+|:--------|:------------|
+| **Discounted PARS** | Acquire PARS below market price |
+| **Treasury Participation** | Contribute to protocol health |
+| **Predictable Terms** | Known discount and vesting schedule |
+
+## Bond Types
+
+### Reserve Bonds (اوراق ذخیره)
+
+Reserve Bonds accept reserve assets in exchange for PARS:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    RESERVE BOND FLOW                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   Bonder                  Protocol                  Treasury     │
+│     │                        │                          │        │
+│     │  1. Provide USDC       │                          │        │
+│     │ ──────────────────────►│                          │        │
+│     │                        │  2. Deposit to Treasury  │        │
+│     │                        │ ────────────────────────►│        │
+│     │                        │                          │        │
+│     │  3. PARS (discounted)  │                          │        │
+│     │     vests over time    │                          │        │
+│     │ ◄──────────────────────│                          │        │
+│     │                        │                          │        │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Accepted assets**: USDC, DAI, FRAX, ETH
+
+**Purpose**: Accumulate treasury reserves
+
+---
+
+### Inverse Bonds (اوراق معکوس)
+
+Inverse Bonds provide reserve assets in exchange for PARS:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    INVERSE BOND FLOW                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   Bonder                  Protocol                  Treasury     │
+│     │                        │                          │        │
+│     │  1. Provide PARS       │                          │        │
+│     │ ──────────────────────►│                          │        │
+│     │                        │  2. Burn PARS            │        │
+│     │                        │  (reduces supply)        │        │
+│     │                        │                          │        │
+│     │  3. USDC (instant)     │  4. Withdraw reserves    │        │
+│     │ ◄──────────────────────│◄─────────────────────────│        │
+│     │                        │                          │        │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Output assets**: USDC, DAI (stablecoins)
+
+**Purpose**: Absorb sell pressure, stabilize price below range
+
+**Note**: Inverse bonds vest instantly (no waiting period)
+
+---
+
+### Liquidity Bonds (اوراق نقدینگی)
+
+Liquidity Bonds accept LP tokens in exchange for PARS:
+
+**Accepted assets**: PARS/ETH LP, PARS/USDC LP
+
+**Purpose**: Acquire protocol-owned liquidity
+
+---
+
+### PARS Bonds (اوراق پارس)
+
+PARS Bonds exchange PARS for PARS with time-locking:
+
+**Purpose**: Transition from liquid staking to time-locked staking
+
+**Use case**: Users lock PARS for discounted future PARS
+
+## Bond Pricing
+
+### Sequential Dutch Auction (SDA)
+
+Bonds use a modified dutch auction mechanism:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    SDA PRICING                                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Discount                                                       │
+│    ▲                                                            │
+│    │      ╱╲                                                    │
+│    │     ╱  ╲       ╱╲                                          │
+│    │    ╱    ╲     ╱  ╲                                         │
+│    │   ╱      ╲   ╱    ╲                                        │
+│    │  ╱        ╲ ╱      ╲                                       │
+│  0 │ ╱──────────╳────────╲──────────────────────────► Time      │
+│    │                                                            │
+│    │  Purchase   Recovery   Purchase   Recovery                 │
+│    │                                                            │
+│                                                                  │
+│  Discount increases over time until purchase                    │
+│  Each purchase resets the price; discount then grows again      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Key Properties
+
+| Property | Description |
+|:---------|:------------|
+| **No oracle dependency** | Price set by market demand |
+| **Self-regulating** | Supply sold evenly over bond term |
+| **Market-driven** | Discount reflects actual demand |
+
+### Discount Calculation
+
+```
+discount = (market_price - bond_price) / market_price × 100%
+```
+
+- **Positive discount**: Bond offers PARS below market
+- **Negative discount**: Bond offers PARS above market (no purchase)
+
+## Vesting
+
+Most bonds vest over time to prevent immediate selling:
+
+| Bond Type | Vesting Period |
+|:----------|:---------------|
+| Reserve Bonds | 5 days |
+| Liquidity Bonds | 5 days |
+| PARS Bonds | Variable (user-selected) |
+| Inverse Bonds | Instant |
+
+### Claiming
+
+Vested PARS can be claimed at any time:
+- Partial claims allowed
+- No penalty for early partial claim
+- Fully vested after vesting period
+
+## Bond Markets
+
+### Active Markets
+
+The protocol maintains multiple active bond markets:
+
+| Market | Asset | Status |
+|:-------|:------|:-------|
+| USDC Reserve | USDC | Active |
+| DAI Reserve | DAI | Active |
+| ETH Reserve | ETH | Active |
+| PARS/ETH LP | LP Token | Active |
+
+### Market Parameters
+
+Each market has governance-controlled parameters:
+
+| Parameter | Description |
+|:----------|:------------|
+| **Capacity** | Maximum PARS available for bonding |
+| **Vesting** | Time until bond fully vests |
+| **Control variable** | Price adjustment speed |
+| **Min/Max price** | Price boundaries |
+
+## Range-Bound Stability Integration
+
+Bonds integrate with Range-Bound Stability (RBS):
+
+### Above Upper Cushion
+
+Reserve Bonds activate:
+- Sell PARS at premium
+- Accumulate reserves
+- Reduce PARS supply pressure
+
+### Below Lower Cushion
+
+Inverse Bonds activate:
+- Buy PARS with reserves
+- Burn purchased PARS
+- Support price
+
+## Related Documentation
+
+- [How Bonds Work](/bonds/how-it-works) – Detailed mechanics
+- [Treasury](/treasury/overview) – Where bonded assets go
+- [PARS Token](/tokens/pars) – Token economics

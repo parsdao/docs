@@ -1,0 +1,237 @@
+# veASHA Voting System
+
+The Pars Protocol governance system uses vote-escrowed tokens (veASHA) to ensure that voting power reflects long-term commitment to the protocol. This page details the mechanics of voting, delegation, and coercion resistance.
+
+## Voting Power
+
+### veASHA Calculation
+
+Voting power is determined by the amount of ASHA locked and the lock duration:
+
+```
+veASHA = ASHA_amount × (remaining_lock_time / max_lock_time)
+```
+
+| Lock Duration | Initial Weight | Notes |
+|:--------------|:---------------|:------|
+| 1 week | 0.0048x | Minimum lock period |
+| 1 month | 0.021x | |
+| 6 months | 0.125x | |
+| 1 year | 0.25x | |
+| 2 years | 0.50x | |
+| 4 years | 1.00x | Maximum weight |
+
+Voting power decays linearly as the lock approaches expiry. A 4-year lock of 1,000 ASHA starts at 1,000 veASHA and decreases to 0 at expiry.
+
+### Lock Management
+
+```solidity
+interface IVeASHA {
+    /// @notice Lock ASHA tokens to receive veASHA
+    function lock(uint256 amount, uint256 duration) external returns (uint256 lockId);
+
+    /// @notice Extend an existing lock duration
+    function extendLock(uint256 lockId, uint256 newDuration) external;
+
+    /// @notice Add more ASHA to an existing lock
+    function increaseLock(uint256 lockId, uint256 additionalAmount) external;
+
+    /// @notice Withdraw ASHA after lock expires
+    function withdraw(uint256 lockId) external;
+
+    /// @notice Get current voting power
+    function votingPower(address account) external view returns (uint256);
+}
+```
+
+## Delegation
+
+veASHA holders can delegate their voting power to any address:
+
+### Delegation Rules
+
+- Delegate to only one address at a time
+- Entire balance is delegated (no partial delegation)
+- Self-delegation is supported and common
+- Changes to delegator's balance automatically adjust delegatee's power
+- Delegation persists until explicitly changed
+
+### Delegation Methods
+
+1. **Direct Delegation**: Call `delegate(address delegatee)` on the veASHA contract
+2. **Signature Delegation**: Off-chain signature via `delegateBySig()` for gasless delegation
+
+### Delegation UI
+
+Manage delegations at [pars.vote/delegate](https://pars.vote/delegate):
+
+- View current delegation status
+- Delegate to any address
+- Self-delegate for direct voting
+- View delegation history
+
+## Pessimistic Vote Casting
+
+The voting system uses pessimistic vote casting to prevent manipulation:
+
+```solidity
+function castVoteInternal(
+    address voter,
+    uint256 resolutionId,
+    uint8 support
+) internal returns (uint256) {
+    // Get votes at resolution start and current time
+    uint256 originalVotes = veasha.getPriorVotes(voter, resolution.startBlock);
+    uint256 currentVotes = veasha.getPriorVotes(voter, block.number);
+
+    // Use minimum of the two
+    uint256 votes = currentVotes > originalVotes ? originalVotes : currentVotes;
+
+    return votes;
+}
+```
+
+### Examples
+
+| Voter | At Resolution Start | When Voting | Counted Votes |
+|:------|:-------------------|:------------|:--------------|
+| Alice | 0 veASHA | 100 veASHA | 0 veASHA |
+| Bob | 100 veASHA | 0 veASHA | 0 veASHA |
+| Carol | 100 veASHA | 100 veASHA | 100 veASHA |
+| Dan | 50 veASHA | 100 veASHA | 50 veASHA |
+
+This prevents voters from buying influence after a resolution is submitted.
+
+## Vote Options
+
+Three vote options are available:
+
+| Option | Value | Description |
+|:-------|:------|:------------|
+| Against | 0 | Vote against the resolution |
+| For | 1 | Vote for the resolution |
+| Abstain | 2 | Abstain (counts toward quorum) |
+
+## Resolution Approval
+
+A resolution passes if it meets both requirements:
+
+### 1. Quorum
+
+Minimum number of FOR votes required:
+
+```
+quorumVotes = (veASHA_totalSupply × quorumPct) / 100_000
+```
+
+Current quorum: **10% of circulating veASHA**
+
+### 2. Approval Threshold
+
+Minimum percentage of votes that must be FOR:
+
+```
+approval = (forVotes × 100_000) / (forVotes + againstVotes)
+```
+
+Current threshold: **50%** (simple majority)
+
+For large treasury allocations (>$100K), super-majority is required: **67%**
+
+## Coercion-Resistant Voting
+
+For voters in high-threat environments, anonymous voting mode protects against coercion.
+
+### Anonymous Voting Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    ANONYMOUS VOTING FLOW                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   Voter                    Contract                              │
+│     │                         │                                  │
+│     │  1. Commit (hash of     │                                  │
+│     │     vote + nullifier)   │                                  │
+│     │ ───────────────────────►│                                  │
+│     │                         │                                  │
+│     │  2. ZK Proof:           │                                  │
+│     │     - I hold veASHA     │                                  │
+│     │     - My vote is valid  │                                  │
+│     │     - Nullifier unused  │                                  │
+│     │ ───────────────────────►│                                  │
+│     │                         │                                  │
+│     │  3. Vote recorded       │                                  │
+│     │     (anonymous)         │                                  │
+│     │ ◄───────────────────────│                                  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Privacy Guarantees
+
+| Feature | Protection |
+|:--------|:-----------|
+| **ZK Eligibility** | Proves veASHA holdings without revealing address |
+| **Nullifier** | Prevents double-voting without linking votes |
+| **Deniability** | Voter can produce fake receipt showing any direction |
+| **Unlinkability** | No connection between address and vote |
+
+### When to Use Anonymous Voting
+
+- Living in or connected to high-threat jurisdictions
+- Concerns about vote coercion or surveillance
+- Desire to keep voting preferences private
+- Whistleblower protection scenarios
+
+## Voting Eligibility Table
+
+| veASHA Type | Standard Voting | Anonymous Voting |
+|:------------|:----------------|:-----------------|
+| veASHA in wallet | Direct | Via ZK proof |
+| veASHA in Advance collateral | Requires delegation | Via ZK proof |
+| veASHA on Pars L2 | Direct | Via ZK proof |
+| veASHA on other chains | Snapshot only | Not available |
+
+## Post-Quantum Signatures
+
+All votes support ML-DSA (FIPS 204) post-quantum signatures:
+
+```solidity
+interface IPQVoting {
+    /// @notice Cast vote using ML-DSA signature
+    function castVotePQ(
+        uint256 resolutionId,
+        uint8 support,
+        bytes memory pqPublicKey,
+        bytes memory pqSignature
+    ) external;
+}
+```
+
+This uses the ML-DSA precompile at `0x0601` on Pars Network.
+
+## Voting Best Practices
+
+### For Individual Voters
+
+1. **Lock for longer periods** to maximize voting power
+2. **Self-delegate** to ensure your votes count
+3. **Review resolutions** during the 3-day delay before voting starts
+4. **Vote early** in the 7-day voting period
+5. **Use anonymous mode** if you have privacy concerns
+
+### For Delegates
+
+1. **Communicate your positions** before major votes
+2. **Vote consistently** with stated principles
+3. **Participate in Town Halls** (PIP-7001) for discussion
+4. **Respond to delegator questions** promptly
+
+## Related Documentation
+
+- [Charter](/governance/charter) – Constitutional document
+- [Pars Council](/governance/council) – Council governance structure
+- [Resolutions](/governance/resolutions) – Resolution lifecycle
+- [veASHA Token](/tokens/veasha) – Token mechanics
+- [PIP-7006: ASHA Reserve Token](/pips/pip-7006-asha-reserve-token)

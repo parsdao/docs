@@ -1,0 +1,223 @@
+# PARS Token
+
+PARS is the native token of Pars Protocol, fully backed by treasury reserves and designed to serve the Persian diaspora as programmable, censorship-resistant money.
+
+## Token Specifications
+
+| Property | Value |
+|:---------|:------|
+| **Name** | Pars Token |
+| **Symbol** | PARS |
+| **Network** | Pars Network (EVM) |
+| **Standard** | ERC-20 |
+| **Decimals** | 18 |
+| **Total Supply** | Variable (algorithmically managed) |
+| **Treasury Backing** | 100% backed by reserves |
+
+## What Makes PARS Different
+
+### Treasury-Backed, Not Pegged
+
+Unlike fiat-pegged stablecoins, PARS is not locked to any currency. Instead:
+
+- Every PARS is backed by treasury reserves
+- Backing includes diversified assets (stablecoins, ETH, POL)
+- Value maintained through algorithmic stability mechanisms
+- No off-chain dependencies or custodians
+
+### Flatcoin Design
+
+PARS is designed as a "flatcoin"—maintaining relative stability without fiat peg:
+
+- Price range enforced programmatically
+- Range-Bound Stability (RBS) mechanisms
+- Transparent backing ratio on-chain
+- Community-governed stability parameters
+
+### Why Not a Stablecoin?
+
+Fiat stablecoins fail the diaspora because:
+
+| Problem | Fiat Stablecoin | PARS |
+|:--------|:----------------|:-----|
+| Censorship | Can be frozen | Censorship-resistant |
+| Centralization | Custodian risk | Decentralized treasury |
+| Inflation | Tied to fiat | Independent value |
+| Transparency | Opaque reserves | On-chain verification |
+
+## Treasury Backing
+
+### Reserve Composition
+
+The protocol treasury maintains diversified reserves:
+
+| Asset Class | Target Allocation | Purpose |
+|:------------|:------------------|:--------|
+| Stablecoins (USDC, DAI) | 30% | Stability anchor |
+| ETH | 20% | Core crypto exposure |
+| Protocol-Owned Liquidity | 25% | Permanent liquidity |
+| Yield-bearing positions | 15% | Treasury growth |
+| Other assets | 10% | Diversification |
+
+### Backing Ratio
+
+The backing ratio measures treasury value per PARS:
+
+```
+backing_ratio = treasury_value / PARS_circulating_supply
+```
+
+This ratio is:
+- Updated on-chain every block
+- Viewable on the protocol dashboard
+- Used for stability mechanism triggers
+
+## Stability Mechanisms
+
+### Range-Bound Stability (RBS)
+
+RBS maintains PARS price within a defined range:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    RANGE-BOUND STABILITY                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Price                                                          │
+│    ▲                                                            │
+│    │     ┌─────────────────────────────┐                        │
+│    │     │    Upper Cushion            │  ◄── Sell pressure     │
+│    │     ├─────────────────────────────┤      (Reserve Bonds)   │
+│    │     │                             │                        │
+│    │     │    Target Range             │                        │
+│    │     │                             │                        │
+│    │     ├─────────────────────────────┤                        │
+│    │     │    Lower Cushion            │  ◄── Buy pressure      │
+│    │     └─────────────────────────────┘      (Inverse Bonds)   │
+│    │                                                            │
+│    └──────────────────────────────────────────────────► Time    │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Mechanism Actions
+
+| Condition | Action | Effect |
+|:----------|:-------|:-------|
+| Price above upper cushion | Reserve Bonds activated | Sell PARS for reserves |
+| Price below lower cushion | Inverse Bonds activated | Buy PARS with reserves |
+| Price in target range | No action | Market-driven price |
+
+### Protocol-Owned Liquidity (POL)
+
+The protocol maintains permanent liquidity:
+
+- PARS/ETH liquidity pool on decentralized exchanges
+- Treasury-owned, not rented from liquidity providers
+- Ensures users can always swap PARS
+
+## Token Utility
+
+### Governance
+
+Lock PARS to receive vePARS for governance:
+
+| Lock Duration | vePARS Weight |
+|:--------------|:--------------|
+| 1 month | 0.25x |
+| 6 months | 0.50x |
+| 1 year | 0.75x |
+| 4 years | 1.00x |
+
+See [vePARS documentation](/tokens/vepars) for details.
+
+### Staking
+
+Stake PARS to receive xPARS and earn yield:
+
+- Protocol fees distributed to stakers
+- Automatic compounding
+- No lock-up period
+
+See [xPARS documentation](/tokens/xpars) for details.
+
+### Advances
+
+Use staked PARS as collateral for self-repaying advances:
+
+- Borrow stablecoins against xPARS
+- Position yield automatically repays debt
+- No price-based liquidations
+
+See [Advances documentation](/overview#key-components) for details.
+
+## Acquiring PARS
+
+### Decentralized Exchanges
+
+PARS trades on:
+- Pars DEX (native)
+- Uniswap (via bridge)
+- Other DEXs with sufficient liquidity
+
+### Bonds
+
+Bond in assets to receive PARS at a discount:
+
+- Reserve Bonds: Provide stablecoins/ETH for discounted PARS
+- Liquidity Bonds: Provide LP tokens for discounted PARS
+
+See [Bonds documentation](/bonds/overview) for details.
+
+### Bridges
+
+PARS can be bridged from:
+- Ethereum (via Wormhole + Lux Bridge)
+- Other supported chains
+
+## Token Distribution
+
+### No Pre-mine
+
+PARS has no:
+- Founder allocation
+- VC allocation
+- Pre-sale tokens
+
+All PARS enters circulation through:
+- Bond purchases
+- Protocol emissions
+- Governance distributions
+
+### Supply Schedule
+
+Supply is managed algorithmically based on:
+- Demand (bond purchases)
+- Treasury health (backing ratio)
+- Governance decisions
+
+## Security
+
+### Contract Addresses
+
+| Network | Contract | Address |
+|:--------|:---------|:--------|
+| Pars Network | PARS Token | `0x...` (TBD) |
+| Ethereum | Bridged PARS | `0x...` (TBD) |
+
+### Audits
+
+PARS token contract is audited by:
+- [Audit firm TBD]
+- Bug bounty program active
+
+### Post-Quantum Ready
+
+Token transfers support ML-DSA signatures for future quantum resistance.
+
+## Related Documentation
+
+- [xPARS Token](/tokens/xpars) – Staking mechanics
+- [vePARS Token](/tokens/vepars) – Governance token
+- [Treasury](/treasury/overview) – Reserve management
+- [Bonds](/bonds/overview) – Acquiring PARS at a discount

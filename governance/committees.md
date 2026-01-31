@@ -1,0 +1,365 @@
+# The Ten Committees (ده کمیته)
+
+Pars Protocol is governed through ten specialized Committees, each with a Persian heritage name and domain expertise. Committees operate as semi-autonomous divisions with dedicated treasury allocations, identity tokens, and governance power over their respective domains.
+
+## Pars DAO Structure
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  PARS DAO (پارس داو) - L1 Sovereign                                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  COUNCIL (شورا) - Elected Governing Body                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────┐│
+│  │  vePARS Holders ──► Elect Council ──► Govern Protocol                    ││
+│  └─────────────────────────────────────────────────────────────────────────┘│
+│                                       │                                      │
+│       ┌───────────────────────────────┼───────────────────────────────┐     │
+│       │                               │                               │     │
+│       ▼                               ▼                               ▼     │
+│  10 COMMITTEES (کمیته‌ها)          WORKING GROUPS               SUB-DAOs     │
+│  Standing divisions              (گروه‌های کاری)            (داوهای زیرمجموعه)│
+│  Each has:                       Temporary task forces       Independent    │
+│  • Safe multisig                 All funds recallable        communities    │
+│  • Council                                                   Bonded funds   │
+│  • Charter                                                   NOT recallable │
+│  • Identity token                                                           │
+│                                                                              │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐              │
+│  │   AMN   │ │  KHAZ   │ │   DAD   │ │   SAL   │ │  FARH   │              │
+│  │Security │ │Treasury │ │Governance│ │ Health  │ │Culture  │              │
+│  │  امنیّت  │ │  خزانه   │ │   داد   │ │  سلامت  │ │  فرهنگ  │              │
+│  │SECURITY │ │TREASURY │ │ GOVERN  │ │ HEALTH  │ │CULTURE  │              │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘              │
+│                                                                            │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐              │
+│  │   DAN   │ │   SAZ   │ │   PAY   │ │  WAQF   │ │   MIZ   │              │
+│  │Research │ │  Infra  │ │Consular │ │Venture  │ │ Impact  │              │
+│  │  دانش   │ │ سازندگی │ │  پیام   │ │  وقف    │ │  میزان  │              │
+│  │RESEARCH │ │ INFRA   │ │CONSULAR │ │VENTURE  │ │ IMPACT  │              │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘              │
+│                                                                              │
+│  SUB-DAOs (Independent Communities)                                          │
+│  ┌─────────────────────────────────────────────────────────────────────────┐│
+│  │  MIGA DAO → MIGA token    │    CYRUS DAO → CYRUS token                  ││
+│  │  Own community, bonded funds NOT recallable by parent                    ││
+│  └─────────────────────────────────────────────────────────────────────────┘│
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Fund Source Rules
+
+Each Committee/Sub-DAO has two types of funds with different recall rules:
+
+| Source | Can Parent Recall? | Example |
+|:-------|:-------------------|:--------|
+| **ALLOCATED** | ✓ Yes | 1% baseline from Pars, grants, streaming |
+| **BONDED** | ✗ No | User-purchased identity tokens |
+
+### Recall Mechanics
+
+If a Committee goes rogue:
+
+```
+Security Committee Goes Rogue
+├── ALLOCATED: $50K → Parent CAN recall ✓
+├── BONDED: $200K → Parent CANNOT recall ✗
+├── Parent Actions Available:
+│   ├── Halt future allocations ✓
+│   ├── Veto pending proposals ✓
+│   ├── Recall allocated funds ✓
+│   └── Recall bonded funds ✗
+└── Committee continues with $200K bonded
+    └── Community can fork/exit/reform
+```
+
+This preserves **community sovereignty** while giving parent **oversight over delegated capital**.
+
+## Committee Architecture
+
+Each Committee operates with:
+
+| Component | Description |
+|:----------|:------------|
+| **Safe** | Multi-sig treasury vault |
+| **Council** | Elected governing body (subset of Committee leads) |
+| **Charter** | Operating rules and mandate |
+| **Identity Token** | Membership and governance token |
+
+## Committee Profiles
+
+### AMN | امنیّت | Security
+
+**Domain**: Safety & Protection
+
+Operational security for community members, smart contract audits, and protection systems for high-threat environments.
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | AMN |
+| **Identity Token** | SECURITY |
+| **Treasury Strategy** | Stablecoin-only holdings |
+| **Baseline Allocation** | 1% of protocol fees |
+
+**Key Responsibilities**:
+- Smart contract security audits
+- Privacy-preserving voting systems
+- Secure communication infrastructure
+- Threat monitoring and response
+
+---
+
+### KHAZ | خزانه | Treasury
+
+**Domain**: Financial Infrastructure
+
+Central treasury management for the Pars ecosystem. Manages diversified reserves, coordinates cross-Committee funding, and ensures long-term financial sustainability.
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | KHAZ |
+| **Identity Token** | TREASURY |
+| **Treasury Strategy** | Diversified reserves |
+| **Baseline Allocation** | 1% of protocol fees (+ 25% of Committee allocation) |
+
+**Key Responsibilities**:
+- Multi-chain treasury infrastructure
+- Reserve diversification strategy
+- Cross-Committee funding coordination
+- Financial reporting and transparency
+
+---
+
+### DAD | داد | Governance
+
+**Domain**: Coordination
+
+Governance tooling, proposal systems, and coordination mechanisms for Pars Improvement Proposals (PIPs).
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | DAD |
+| **Identity Token** | GOVERN |
+| **Treasury Strategy** | Minimal holdings, focus on tooling |
+| **Baseline Allocation** | 1% of protocol fees |
+
+**Key Responsibilities**:
+- PIP proposal system
+- Voting infrastructure
+- Governance documentation
+- Cross-Committee coordination
+
+---
+
+### SAL | سلامت | Health
+
+**Domain**: Healthcare Access
+
+Healthcare coordination for diaspora communities, mental health support, and medical resource sharing networks.
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | SAL |
+| **Identity Token** | HEALTH |
+| **Treasury Strategy** | Stablecoin + yield-bearing positions |
+| **Baseline Allocation** | 1% of protocol fees |
+
+**Key Responsibilities**:
+- Diaspora health networks
+- Mental health support programs
+- Medical professional directory
+- Health education resources
+
+---
+
+### FARH | فرهنگ | Culture
+
+**Domain**: Heritage & Arts
+
+Preserving and promoting Persian cultural heritage through arts, language, and educational programming.
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | FARH |
+| **Identity Token** | CULTURE |
+| **Treasury Strategy** | Creator grants, cultural investment |
+| **Baseline Allocation** | 1% of protocol fees |
+
+**Key Responsibilities**:
+- Persian language preservation
+- Cultural heritage documentation
+- Artist grants and residencies
+- Nowruz and cultural event funding
+
+---
+
+### DAN | دانش | Research
+
+**Domain**: Knowledge & Education
+
+Funding research on diaspora issues, governance models, and technology development for community benefit.
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | DAN |
+| **Identity Token** | RESEARCH |
+| **Treasury Strategy** | Research grants, academic partnerships |
+| **Baseline Allocation** | 1% of protocol fees |
+
+**Key Responsibilities**:
+- Diaspora research grants
+- Academic partnerships
+- Policy research and analysis
+- Technology R&D funding
+
+---
+
+### SAZ | سازندگی | Infrastructure
+
+**Domain**: Technical Systems
+
+Building and maintaining the technical infrastructure that powers the Pars ecosystem.
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | SAZ |
+| **Identity Token** | INFRA |
+| **Treasury Strategy** | Procurement, technical investment |
+| **Baseline Allocation** | 1% of protocol fees |
+
+**Key Responsibilities**:
+- Multi-chain infrastructure
+- Bridge maintenance and security
+- Developer tooling and SDKs
+- Infrastructure scaling
+
+---
+
+### PAY | پیام | Consular
+
+**Domain**: Community Relations
+
+Coordination between diaspora chapters across 85+ countries, facilitating communication and resource sharing.
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | PAY |
+| **Identity Token** | CONSULAR |
+| **Treasury Strategy** | Coordination, chapter support |
+| **Baseline Allocation** | 1% of protocol fees |
+
+**Key Responsibilities**:
+- Chapter coordination
+- Cross-border communication
+- Community event support
+- Diaspora networking
+
+---
+
+### WAQF | وقف | Venture
+
+**Domain**: Long-term Wealth
+
+Multi-generational endowment following the Persian waqf tradition. Long-horizon investments for perpetual community benefit.
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | WAQF |
+| **Identity Token** | VENTURE |
+| **Treasury Strategy** | Long-horizon venture, preservation |
+| **Baseline Allocation** | 1% of protocol fees |
+
+**Key Responsibilities**:
+- Endowment fund management
+- Long-term investment strategy
+- Perpetual grant programs
+- Legacy planning
+
+---
+
+### MIZ | میزان | Impact
+
+**Domain**: Accountability
+
+Impact auditing, accountability mechanisms, and ensuring all Committees operate with transparency and integrity.
+
+| Aspect | Detail |
+|:-------|:-------|
+| **Symbol** | MIZ |
+| **Identity Token** | IMPACT |
+| **Treasury Strategy** | Impact audits, verification |
+| **Baseline Allocation** | 1% of protocol fees |
+
+**Key Responsibilities**:
+- Impact measurement
+- Financial audits
+- Accountability reporting
+- Whistleblower protection
+
+---
+
+## Governance Power Formula
+
+Committee voting power is determined by veASHA holdings:
+
+```
+veASHA = ASHA_amount × (lock_duration / max_lock_duration)
+```
+
+| Component | Purpose |
+|:----------|:--------|
+| **ASHA Locking** | Requires locking reserve token for governance |
+| **Linear Weighting** | Longer locks earn proportionally more power |
+| **Commitment** | 4-year max lock demonstrates long-term alignment |
+
+veASHA is the sole governance token. CYRUS, MIGA, and PARS are bondable collateral for acquiring ASHA at a discount, not governance tokens themselves.
+
+## Committee Elections
+
+Committee leads are elected by veASHA holders:
+
+- **Term Length**: 6 months
+- **Election Cycle**: Staggered (5 committees every quarter)
+- **Removal**: Any lead can be removed by governance vote
+- **Succession**: Deputy lead assumes role if lead is removed
+
+## Treasury Allocation
+
+Each Committee has a dedicated Safe vault and receives:
+- **1% baseline allocation** from protocol fees (guaranteed)
+- **Additional gauge-directed allocation** via veASHA voting (PIP-7003, PIP-7004)
+- **Can issue bonds** to acquire additional funding from community
+
+| Committee | Identity Token | Baseline | Vault Threshold | Can Issue Bonds |
+|:----------|:---------------|:---------|:----------------|:----------------|
+| AMN | SECURITY | 1% | 3-of-5 | ✓ |
+| KHAZ | TREASURY | 1% | 3-of-5 | ✓ |
+| DAD | GOVERN | 1% | 2-of-5 | ✓ |
+| SAL | HEALTH | 1% | 2-of-5 | ✓ |
+| FARH | CULTURE | 1% | 2-of-5 | ✓ |
+| DAN | RESEARCH | 1% | 2-of-5 | ✓ |
+| SAZ | INFRA | 1% | 3-of-5 | ✓ |
+| PAY | CONSULAR | 1% | 2-of-5 | ✓ |
+| WAQF | VENTURE | 1% | 4-of-5 | ✓ |
+| MIZ | IMPACT | 1% | 3-of-5 | ✓ |
+
+**Note**: The remaining 90% of protocol fees flows to the GaugeController for vePARS-weighted distribution (see PIP-7003, PIP-7004).
+
+## Cross-Committee Coordination
+
+Committees coordinate through:
+
+- **Council Resolutions**: Major decisions require full Council vote
+- **Committee Liaisons**: Each Committee designates a cross-Committee representative
+- **Quarterly Summits**: All Committee leads meet via Town Hall (PIP-7001)
+- **Shared Infrastructure**: Common tooling managed by SAZ Committee
+
+## Related Documentation
+
+- [Charter](/governance/charter) – Constitutional document
+- [Treasury Management](/treasury/overview) – How Committee treasuries operate
+- [Pars Council](/governance/council) – Top-level governance body
+- [Voting](/governance/voting) – veASHA voting mechanics
+- [PIP-7006: ASHA Reserve Token](/pips/pip-7006-asha-reserve-token)
+- [PIP-7007: Fractal Governance](/pips/pip-7007-fractal-governance)

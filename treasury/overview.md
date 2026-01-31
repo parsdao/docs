@@ -1,0 +1,284 @@
+# Treasury Overview (خزانه)
+
+The Treasury (خزانه - _Khazaneh_) is the foundation of Pars Protocol. It holds all assets that back PARS and provides the capital for protocol operations. Treasury management is governed by the Pars Council through transparent, on-chain processes.
+
+## Treasury Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           PARS TREASURY (خزانه)                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  GOVERNANCE LAYER                                                           │
+│  ┌─────────────────────────────────────────────────────────────────────────┐│
+│  │  Pars Council ──► Resolutions ──► Treasury Policies                     ││
+│  └─────────────────────────────────────────────────────────────────────────┘│
+│                                       │                                      │
+│                                       ▼                                      │
+│  CUSTODY LAYER (Safe Multisig)                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────┐│
+│  │                                                                         ││
+│  │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐               ││
+│  │  │ Main Treasury │  │  Operations   │  │    Grants     │               ││
+│  │  │   (3-of-5)    │  │   (2-of-5)    │  │   (3-of-5)    │               ││
+│  │  │               │  │               │  │               │               ││
+│  │  │ Long-term     │  │ Monthly opex  │  │ Ecosystem     │               ││
+│  │  │ reserves      │  │ up to $10K    │  │ development   │               ││
+│  │  └───────────────┘  └───────────────┘  └───────────────┘               ││
+│  │                                                                         ││
+│  └─────────────────────────────────────────────────────────────────────────┘│
+│                                       │                                      │
+│                                       ▼                                      │
+│  ASSET LAYER                                                                │
+│  ┌─────────────────────────────────────────────────────────────────────────┐│
+│  │  Stablecoins │ ETH │ Protocol-Owned Liquidity │ Yield Positions         ││
+│  └─────────────────────────────────────────────────────────────────────────┘│
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Core Responsibilities
+
+### 1. PARS Backing
+
+The treasury ensures every PARS is backed:
+
+```
+backing_per_PARS = total_treasury_value / PARS_circulating_supply
+```
+
+The backing ratio is:
+- Calculated on-chain every block
+- Publicly verifiable
+- Used for stability mechanism triggers
+
+### 2. Liquidity Provision
+
+The treasury maintains permanent liquidity:
+- Protocol-Owned Liquidity (POL) in DEX pools
+- No reliance on external liquidity mining
+- Trading fees return to treasury
+
+### 3. Stability Operations
+
+Treasury funds stability mechanisms:
+- Range-Bound Stability (RBS) market operations
+- Inverse bonds to support price floor
+- Reserve bonds to capture price ceiling
+
+### 4. Committee Funding
+
+Treasury allocates resources to Committees:
+- Streaming payments via Sablier
+- Milestone-based grants
+- Emergency allocations
+
+## Multi-Sig Structure
+
+### Main Treasury
+
+| Parameter | Value |
+|:----------|:------|
+| Threshold | 3-of-5 signers |
+| Purpose | Long-term reserves, large allocations |
+| Limits | Governance approval required |
+
+### Operations Vault
+
+| Parameter | Value |
+|:----------|:------|
+| Threshold | 2-of-5 signers |
+| Purpose | Recurring operational expenses |
+| Limits | $10,000/month |
+
+### Grants Vault
+
+| Parameter | Value |
+|:----------|:------|
+| Threshold | 3-of-5 signers |
+| Purpose | Ecosystem grants and bounties |
+| Limits | Governance approval required |
+
+## Spending Tiers
+
+All treasury expenditures follow tiered approval:
+
+### Tier 1: Under $10,000
+
+| Parameter | Value |
+|:----------|:------|
+| Voting Period | 7 days |
+| Quorum | 10% vePARS |
+| Approval | >50% |
+| Timelock | 48 hours |
+
+### Tier 2: $10,000 - $100,000
+
+| Parameter | Value |
+|:----------|:------|
+| Voting Period | 14 days |
+| Quorum | 15% vePARS |
+| Approval | >50% |
+| Timelock | 7 days |
+
+### Tier 3: Over $100,000
+
+| Parameter | Value |
+|:----------|:------|
+| Voting Period | 21 days |
+| Quorum | 20% vePARS |
+| Approval | >67% (super-majority) |
+| Timelock | 30 days |
+
+## Reserve Requirements
+
+The DAO maintains minimum reserves:
+
+| Requirement | Value | Description |
+|:------------|:------|:------------|
+| Operational Runway | 6 months | Cover all active streams and costs |
+| Stablecoin Reserve | 30% of runway | Hedge volatility |
+| Emergency Fund | $100,000 minimum | Immediate security response |
+
+If reserves fall below minimum, Tier 2 and Tier 3 spending suspends automatically.
+
+## Diversification Policy
+
+Treasury assets are diversified:
+
+| Constraint | Limit |
+|:-----------|:------|
+| Single Asset Max | 30% of total (excluding PARS) |
+| Stablecoin Min | 20% of total |
+| PARS Max | 50% of total |
+| Rebalancing | Quarterly |
+
+## Asset Allocation
+
+### Reserve Assets
+
+| Asset | Purpose | Target Allocation |
+|:------|:--------|:------------------|
+| USDC | Stability, immediate liquidity | 15% |
+| DAI | Decentralized stable | 10% |
+| sDAI | Yield-bearing stable | 5% |
+
+### Protocol Assets
+
+| Asset | Purpose | Target Allocation |
+|:------|:--------|:------------------|
+| ETH | Core crypto exposure | 20% |
+| PARS/ETH LP | Protocol-owned liquidity | 25% |
+| PARS/USDC LP | Stablecoin liquidity | 10% |
+
+### Yield Positions
+
+| Position | Purpose | Target Allocation |
+|:---------|:--------|:------------------|
+| Yield strategies | Treasury growth | 15% |
+
+## Revenue Sources
+
+### Protocol Revenue
+
+| Source | Description |
+|:-------|:------------|
+| Bond premiums | Profit from bond sales above backing |
+| Trading fees | Fees from POL positions |
+| Advance interest | Fees from Advance facility |
+| Yield | Returns from treasury investments |
+
+### Revenue Distribution
+
+```
+Protocol Revenue
+      │
+      ├──► 70% to Treasury reserves
+      │
+      ├──► 20% to xPARS stakers
+      │
+      └──► 10% to Committee allocations
+```
+
+## Streaming Payments
+
+The treasury uses Sablier for continuous payments:
+
+### Contributor Streams
+
+- Monthly compensation flows continuously
+- Claimable at any time
+- Cancellable if contributor stops work
+
+### Grant Streams
+
+- Milestone-based unlocks
+- Cliff periods for large grants
+- Automatic distribution
+
+## Emergency Procedures
+
+### Emergency Freeze
+
+Any 2-of-5 signers can freeze treasury:
+
+- Duration: 72 hours maximum
+- Effect: All transactions paused
+- Extension: Requires governance vote
+
+### Emergency Recovery
+
+If signer compromised:
+
+1. Remaining signers freeze treasury
+2. Expedited governance vote (3 days)
+3. Replace compromised signer
+4. Lift freeze
+
+## Transparency
+
+### On-Chain Visibility
+
+All treasury operations are on-chain:
+- Transaction history public
+- Reserve composition verifiable
+- Spending trackable
+
+### Quarterly Reports
+
+Published reports include:
+
+1. Balance sheet
+2. Income statement
+3. Expenditure breakdown
+4. Stream status
+5. Reserve compliance
+6. Diversification compliance
+7. Upcoming obligations
+
+Reports published on-chain (IPFS) and at [pars.vote](https://pars.vote).
+
+## Treasury Dashboard
+
+Monitor treasury at [app.pars.network/treasury](https://app.pars.network/treasury):
+
+- Real-time reserve composition
+- Backing ratio
+- Active streams
+- Recent transactions
+- Historical data
+
+## Contract Addresses
+
+| Contract | Address |
+|:---------|:--------|
+| Treasury | `0x...` (TBD) |
+| Main Safe | `0x...` (TBD) |
+| Operations Safe | `0x...` (TBD) |
+| Grants Safe | `0x...` (TBD) |
+
+## Related Documentation
+
+- [Committee Treasuries](/treasury/committees) – Per-committee allocations
+- [Bonds](/bonds/overview) – How treasury acquires assets
+- [Pars Council](/governance/council) – Governance structure

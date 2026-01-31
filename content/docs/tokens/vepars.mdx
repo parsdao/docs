@@ -1,0 +1,264 @@
+# vePARS Token (Vote-Escrowed PARS)
+
+vePARS is the governance token of Pars Protocol. It is obtained by locking PARS for a specified duration, aligning governance power with long-term commitment to the protocol.
+
+## Token Specifications
+
+| Property | Value |
+|:---------|:------|
+| **Name** | Vote-Escrowed Pars |
+| **Symbol** | vePARS |
+| **Network** | Pars Network (EVM) |
+| **Transferability** | Non-transferable |
+| **Decimals** | 18 |
+
+## Why Vote Escrow?
+
+Standard token voting allows short-term actors to influence governance:
+
+| Problem | Standard Token | vePARS |
+|:--------|:---------------|:-------|
+| Vote buying | Easy | Expensive (requires lock) |
+| Short-term manipulation | Common | Prevented by commitment |
+| Governance attacks | Vulnerable | Time-locked protection |
+| Voter alignment | Weak | Strong (skin in the game) |
+
+vePARS ensures that governance power belongs to those committed to the protocol's long-term success.
+
+## Lock Mechanics
+
+### Creating a Lock
+
+Lock PARS to receive vePARS:
+
+```solidity
+interface IVePARS {
+    /// @notice Lock PARS to receive vePARS
+    /// @param amount Amount of PARS to lock
+    /// @param duration Lock duration in seconds
+    function lock(uint256 amount, uint256 duration) external returns (uint256 lockId);
+}
+```
+
+### Lock Parameters
+
+| Parameter | Value |
+|:----------|:------|
+| Minimum lock | 30 days |
+| Maximum lock | 4 years |
+| Lock granularity | 1 week |
+
+### Voting Power Calculation
+
+Voting power depends on amount and remaining lock time:
+
+```
+vePARS = PARS_locked × (remaining_time / max_lock_time)
+```
+
+| Lock Duration | Initial Weight | After 1 Year |
+|:--------------|:---------------|:-------------|
+| 1 month | 0.021x | 0x (expired) |
+| 6 months | 0.125x | 0x (expired) |
+| 1 year | 0.25x | 0x (expired) |
+| 2 years | 0.50x | 0.25x |
+| 4 years | 1.00x | 0.75x |
+
+### Linear Decay
+
+Voting power decays linearly as the lock approaches expiry:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    VOTING POWER DECAY                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  vePARS                                                         │
+│    ▲                                                            │
+│ 1000│╲                                                          │
+│    │  ╲                                                         │
+│ 750│    ╲                                                       │
+│    │      ╲                                                     │
+│ 500│        ╲                                                   │
+│    │          ╲                                                 │
+│ 250│            ╲                                               │
+│    │              ╲                                             │
+│   0│────────────────╲──────────────────────────────────► Time   │
+│    │   1yr    2yr    3yr    4yr (expiry)                        │
+│                                                                  │
+│  Example: 1,000 PARS locked for 4 years                         │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Managing Locks
+
+### Extend Lock Duration
+
+Increase remaining lock time (up to 4 years from now):
+
+```solidity
+function extendLock(uint256 lockId, uint256 newDuration) external;
+```
+
+This increases vePARS balance immediately.
+
+### Increase Lock Amount
+
+Add more PARS to an existing lock:
+
+```solidity
+function increaseLock(uint256 lockId, uint256 additionalAmount) external;
+```
+
+New PARS inherits the existing lock's expiry.
+
+### Withdraw
+
+After lock expires, withdraw PARS:
+
+```solidity
+function withdraw(uint256 lockId) external;
+```
+
+Only available after lock expiry. No early withdrawal.
+
+## Governance Rights
+
+### Voting
+
+vePARS holders can vote on:
+
+- Protocol parameter changes
+- Treasury allocations
+- Committee elections
+- Emergency actions
+
+See [Voting documentation](/governance/voting) for details.
+
+### Proposal Submission
+
+With sufficient vePARS, submit resolutions:
+
+| Requirement | Current Value |
+|:------------|:--------------|
+| Proposal threshold | 0.017% of supply |
+
+See [Resolutions documentation](/governance/resolutions) for details.
+
+### Delegation
+
+Delegate voting power to another address:
+
+```solidity
+function delegate(address delegatee) external;
+```
+
+- Entire balance is delegated
+- One delegatee at a time
+- Self-delegation is common
+
+## vePARS in Committee Governance
+
+### Balanced Power Formula
+
+For Committee voting, power uses a balanced formula:
+
+```
+committee_power = min(PARS, MIGA) × √(lock_duration / max_duration)
+```
+
+This ensures:
+- Requires both ecosystem tokens
+- Prevents whale dominance
+- Rewards commitment with diminishing returns
+
+### Committee Elections
+
+vePARS holders elect Committee leads:
+- 6-month terms
+- Staggered rotation
+- Can remove leads via governance vote
+
+## Coercion-Resistant Features
+
+### Anonymous Voting
+
+For voters in high-threat environments:
+
+1. **ZK Eligibility**: Prove vePARS ownership without revealing address
+2. **Anonymous Ballot**: Vote via zero-knowledge proof
+3. **Deniability**: Generate fake receipts showing any vote
+
+See [Voting documentation](/governance/voting) for details.
+
+### Post-Quantum Signatures
+
+Lock and voting operations support ML-DSA signatures:
+
+```solidity
+function lockPQ(
+    uint256 amount,
+    uint256 duration,
+    bytes memory pqPublicKey,
+    bytes memory pqSignature
+) external returns (uint256 lockId);
+```
+
+## Use Cases
+
+### Governance Participation
+
+- Vote on protocol upgrades
+- Elect Committee leadership
+- Approve treasury allocations
+
+### Advance Collateral
+
+Use vePARS position as collateral:
+- Borrow against locked position
+- Yield repays debt over time
+- No price-based liquidation
+
+### Protocol Incentives
+
+Some protocol incentives require vePARS:
+- Boosted yields in certain strategies
+- Priority access to new features
+- Committee membership eligibility
+
+## Strategies
+
+### Long-Term Believer
+
+Lock maximum duration (4 years):
+- Maximum voting power
+- Maximum protocol alignment
+- Re-lock periodically to maintain weight
+
+### Active Governance
+
+Lock 1-2 years:
+- Meaningful voting power
+- Flexibility to adjust position
+- Balance between commitment and liquidity
+
+### Delegator
+
+Lock minimum duration:
+- Participate via delegation
+- Maintain liquidity
+- Support trusted delegates
+
+## Contract Addresses
+
+| Network | Contract | Address |
+|:--------|:---------|:--------|
+| Pars Network | vePARS Token | `0x...` (TBD) |
+
+## Related Documentation
+
+- [PARS Token](/tokens/pars) – Base token
+- [xPARS Token](/tokens/xpars) – Liquid staking
+- [Voting](/governance/voting) – Voting mechanics
+- [Pars Council](/governance/council) – Governance structure

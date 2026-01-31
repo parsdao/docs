@@ -1,0 +1,21 @@
+{
+  "title": "Pars Protocol",
+  "pages": [
+    "index",
+    "overview",
+    "---Governance---",
+    "...governance",
+    "---Tokens---",
+    "...tokens",
+    "---Bonds---",
+    "...bonds",
+    "---Treasury---",
+    "...treasury",
+    "---Precompiles---",
+    "crypto",
+    "dex",
+    "fhe",
+    "oracle",
+    "ai"
+  ]
+}

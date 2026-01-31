@@ -1,0 +1,281 @@
+# Resolution Process (قطعنامه)
+
+Resolutions (قطعنامه - _Qatnameh_) are the formal mechanism for proposing changes to Pars Protocol. This document describes the complete lifecycle of a resolution from draft to execution.
+
+## Resolution Lifecycle
+
+Every resolution follows this path:
+
+```
+Draft ──► Submitted ──► Active ──► Queued ──► Executed
+  │           │           │           │
+  └─► Cancelled  └─► Defeated  └─► Vetoed  └─► Expired
+```
+
+### Phase Overview
+
+| Phase | Duration | Description |
+|:------|:---------|:------------|
+| **Draft** | Indefinite | Resolution prepared off-chain |
+| **Submitted** | 3 days | Review period before voting |
+| **Active** | 7 days | Voting period |
+| **Queued** | 48 hours | Timelock before execution |
+| **Executed** | - | Resolution actions applied |
+
+## 1. Draft Phase
+
+### Preparation
+
+Before submission, resolution authors should:
+
+1. **Draft the PIP** (Pars Improvement Proposal) document
+2. **Discuss on forums** at forum.pars.network
+3. **Gather community feedback** via Town Hall sessions
+4. **Prepare on-chain actions** with proper encoding
+
+### Code Review Requirement
+
+All resolutions must be:
+
+- Added to the `pars-governance` repository
+- Tested in fork simulation environment
+- Reviewed by at least 2 independent parties
+
+**Resolutions without code review will be vetoed by the Guardian.**
+
+### Minimum Requirements
+
+| Requirement | Value |
+|:------------|:------|
+| Proposer veASHA | 0.25% of total supply |
+| Code repository | pars-network/pars-governance |
+| Forum discussion | Minimum 7 days |
+| Simulation test | Required |
+
+## 2. Submission Phase
+
+### Submitting a Resolution
+
+Call `propose()` on the Governor contract with:
+
+```solidity
+function propose(
+    address[] memory targets,     // Contract addresses to call
+    uint256[] memory values,      // ETH values for each call
+    bytes[] memory calldatas,     // Encoded function calls
+    string memory description     // Resolution description
+) public returns (uint256 resolutionId);
+```
+
+### Review Period
+
+After submission, a 3-day review period begins (voting delay):
+
+- Community reviews the resolution actions
+- Technical review of on-chain code
+- Discussion continues on forums
+- Author can still cancel
+
+### What to Review
+
+1. **Intent alignment**: Does the resolution match stated goals?
+2. **Security**: Are the on-chain actions safe?
+3. **Consensus**: Does forum discussion show community support?
+4. **Completeness**: Are all necessary actions included?
+
+## 3. Active Phase (Voting)
+
+### Activation
+
+Anyone can activate a resolution after the review period by calling `activate()`:
+
+```solidity
+function activate(uint256 resolutionId) public;
+```
+
+Activation must occur within 24 hours of review period ending, or the resolution expires.
+
+### Quorum Calculation
+
+At activation, quorum is locked based on current veASHA supply:
+
+```solidity
+// Standard quorum
+quorumVotes = (veasha.totalSupply() * quorumPct) / 100_000;
+
+// High-risk quorum (for critical modules)
+highRiskQuorumVotes = (veasha.totalSupply() * highRiskQuorum) / 100_000;
+```
+
+### Casting Votes
+
+veASHA holders vote during the 7-day voting period:
+
+```solidity
+function castVote(uint256 resolutionId, uint8 support) public;
+// support: 0=Against, 1=For, 2=Abstain
+
+function castVoteWithReason(
+    uint256 resolutionId,
+    uint8 support,
+    string calldata reason
+) public;
+```
+
+### Vote Outcome
+
+Resolution passes if:
+
+1. **Quorum met**: FOR votes >= quorumVotes
+2. **Approval threshold**: FOR votes >= 50% of (FOR + AGAINST)
+
+For large treasury allocations: FOR votes >= 67%
+
+## 4. Queued Phase (Timelock)
+
+### Queueing
+
+Anyone can queue a successful resolution:
+
+```solidity
+function queue(uint256 resolutionId) public;
+```
+
+The proposer's veASHA balance is checked again—if below threshold, queueing fails.
+
+### Timelock Duration
+
+| Resolution Type | Timelock |
+|:----------------|:---------|
+| Standard | 48 hours |
+| Large allocation (>$100K) | 7 days |
+| Critical/High-risk | 30 days |
+
+### What Happens During Timelock
+
+- Community final review of pending actions
+- Guardian can veto if malicious intent discovered
+- Emergency freeze can pause execution
+- Technical preparation for execution
+
+## 5. Execution Phase
+
+### Executing
+
+Anyone can execute after timelock:
+
+```solidity
+function execute(uint256 resolutionId) public;
+```
+
+Requirements:
+- Timelock elapsed
+- Grace period not exceeded (24 hours)
+- Proposer still holds threshold veASHA
+
+### Grace Period
+
+Execution must occur within 24 hours after timelock ends, or the resolution expires.
+
+## Resolution Failure Modes
+
+### Cancelled
+
+- Author cancels before execution
+- Anyone can cancel if proposer's veASHA drops below threshold
+
+### Defeated
+
+- Quorum not met
+- Approval threshold not reached
+- Resolution automatically marked defeated after voting period
+
+### Vetoed
+
+- Guardian vetoes during timelock
+- Resolution fails permanently
+- Guardian must provide public rationale
+
+### Expired
+
+- Not activated within activation grace period
+- Not executed within execution grace period
+
+## Resolution Parameters
+
+| Parameter | Current Value | Description |
+|:----------|:--------------|:------------|
+| `proposalThreshold` | 0.25% | Min veASHA to submit |
+| `quorumPct` | 10% | Min participation |
+| `highRiskQuorum` | 20% | Quorum for critical changes |
+| `approvalThresholdPct` | 50% | Min FOR percentage |
+| `proposalMaxOperations` | 15 | Max actions per resolution |
+| `votingDelay` | 3 days | Review period |
+| `votingPeriod` | 7 days | Voting duration |
+| `activationGracePeriod` | 24 hours | Activation window |
+| `GRACE_PERIOD` | 24 hours | Execution window |
+| `delay` | 48 hours | Timelock duration |
+| `MIN_VEASHA_SUPPLY` | 1,000 veASHA | Emergency threshold |
+
+## Emergency State
+
+If veASHA supply collapses below `MIN_VEASHA_SUPPLY`:
+
+1. Governor enters emergency state
+2. No standard resolutions can proceed
+3. Only Guardian can call `emergencyPropose()`
+4. Emergency resolutions address the crisis
+
+## Resolution Types
+
+### Standard Resolution
+
+- Any governance change
+- Parameter adjustments
+- Treasury allocations <$100K
+
+### Extended Review Resolution
+
+- Treasury allocations $10K-$100K
+- 14-day voting period
+- 7-day timelock
+
+### Major Allocation Resolution
+
+- Treasury allocations >$100K
+- 21-day voting period
+- 67% super-majority required
+- 30-day timelock
+
+### Emergency Resolution
+
+- Only during emergency state
+- Guardian-initiated
+- Expedited timelock (24 hours)
+
+## Best Practices
+
+### For Authors
+
+1. **Build consensus first** via forum discussion
+2. **Simulate thoroughly** in fork environment
+3. **Get code reviewed** by independent parties
+4. **Write clear descriptions** with rationale
+5. **Respond to questions** during review period
+
+### For Voters
+
+1. **Read the full resolution** and linked PIPs
+2. **Review the simulation results** in governance repo
+3. **Participate in Town Hall discussions**
+4. **Vote based on long-term protocol health**
+5. **Consider delegating** if you cannot actively review
+
+## Related Documentation
+
+- [Charter](/governance/charter) – Constitutional document
+- [Pars Council](/governance/council) – Governance structure
+- [Voting](/governance/voting) – Detailed voting mechanics
+- [Committees](/governance/committees) – Working group structure
+- [PIP-7006: ASHA Reserve Token](/pips/pip-7006-asha-reserve-token)
+- [PIP-7007: Fractal Governance](/pips/pip-7007-fractal-governance)
