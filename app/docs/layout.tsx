@@ -7,12 +7,17 @@ export default function Layout({ children }: { children: ReactNode }) {
     <DocsLayout
       tree={source.pageTree}
       nav={{
-        title: 'Lux Precompiles',
+        title: 'Pars Protocol',
       }}
       links={[
         {
-          text: 'Standard Contracts',
-          url: 'https://standard.lux.network',
+          text: 'Governance',
+          url: 'https://pars.vote',
+          external: true,
+        },
+        {
+          text: 'Contracts',
+          url: 'https://github.com/parsdao/contracts',
           external: true,
         },
       ]}
