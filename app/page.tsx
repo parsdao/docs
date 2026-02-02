@@ -287,7 +287,7 @@ export default function Home() {
               &copy; 2025 Pars Protocol. MIT License.
             </p>
             <p className="text-sm text-fd-muted-foreground">
-              Built on Lux Network
+              Built on Pars Network
             </p>
           </div>
         </div>
